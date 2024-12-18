@@ -1,0 +1,389 @@
+Resize: mean_r=0.000000
+Resize: mean_g=0.000000
+Resize: mean_b=0.000000
+Resize: scale_r=0.250000
+Resize: scale_g=0.250000
+Resize: scale_b=0.250000
+[vvas_airender.cpp xlnx_kernel_init:465] DEBUG: name car
+[vvas_airender.cpp xlnx_kernel_init:465] DEBUG: name person
+[vvas_airender.cpp xlnx_kernel_init:465] DEBUG: name truck
+[vvas_airender.cpp xlnx_kernel_init:465] DEBUG: name chair
+[vvas_airender.cpp xlnx_kernel_init:465] DEBUG: name bicycle
+[vvas_airender.cpp xlnx_kernel_init:465] DEBUG: name book
+[vvas_airender.cpp xlnx_kernel_init:465] DEBUG: name aeroplane
+[vvas_airender.cpp xlnx_kernel_start:507] DEBUG: enter
+[vvas_airender.cpp xlnx_kernel_start:524] DEBUG: vvas_mata ptr 0xffff640037a0
+[vvas_airender.cpp xlnx_kernel_start:528] DEBUG: Input frame is in NV12 format
+
+[vvas_airender.cpp xlnx_kernel_start:549] DEBUG: Prediction tree: 
+{
+  id : 0,
+  enabled : True,
+  bbox : {
+    x : 0
+    y : 0
+    width : 640
+    height : 480
+  },
+  track label : (null),
+  classes : [
+    
+  ],
+  predictions : [
+    {
+      id : 1,
+      enabled : True,
+      bbox : {
+        x : 45
+        y : 135
+        width : 571
+        height : 330
+      },
+      track label : (null),
+      classes : [
+        {
+          Id : 0
+          Class : 0
+          Label : person
+          Probability : 0.963282
+          Classes : 0
+        }, 
+      ],
+      predictions : [
+        
+      ]
+    }, {
+      id : 2,
+      enabled : True,
+      bbox : {
+        x : 97
+        y : 143
+        width : 540
+        height : 330
+      },
+      track label : (null),
+      classes : [
+        {
+          Id : 1
+          Class : 56
+          Label : chair
+          Probability : 0.578628
+          Classes : 0
+        }, 
+      ],
+      predictions : [
+        
+      ]
+    }, {
+      id : 3,
+      enabled : True,
+      bbox : {
+        x : 380
+        y : 195
+        width : 257
+        height : 246
+      },
+      track label : (null),
+      classes : [
+        {
+          Id : 2
+          Class : 56
+          Label : chair
+          Probability : 0.675602
+          Classes : 0
+        }, 
+      ],
+      predictions : [
+        
+      ]
+    }, {
+      id : 4,
+      enabled : True,
+      bbox : {
+        x : 160
+        y : 216
+        width : 66
+        height : 167
+      },
+      track label : (null),
+      classes : [
+        {
+          Id : 3
+          Class : 56
+          Label : chair
+          Probability : 0.434068
+          Classes : 0
+        }, 
+      ],
+      predictions : [
+        
+      ]
+    }, {
+      id : 5,
+      enabled : True,
+      bbox : {
+        x : 25
+        y : 214
+        width : 86
+        height : 101
+      },
+      track label : (null),
+      classes : [
+        {
+          Id : 4
+          Class : 56
+          Label : chair
+          Probability : 0.308846
+          Classes : 0
+        }, 
+      ],
+      predictions : [
+        
+      ]
+    }, {
+      id : 6,
+      enabled : True,
+      bbox : {
+        x : 114
+        y : 210
+        width : 34
+        height : 81
+      },
+      track label : (null),
+      classes : [
+        {
+          Id : 5
+          Class : 56
+          Label : chair
+          Probability : 0.427763
+          Classes : 0
+        }, 
+      ],
+      predictions : [
+        
+      ]
+    }, 
+  ]
+}
+[vvas_airender.cpp overlay_node_foreach:144] DEBUG: enter
+[vvas_airender.cpp overlay_node_foreach:144] DEBUG: enter
+[vvas_airender.cpp overlay_node_foreach:191] INFO: RESULT: (prediction node 1) person(0) 45 135 616 465 (0.963282)
+[vvas_airender.cpp overlay_node_foreach:202] DEBUG: Drawing rectangle for NV12 image
+[vvas_airender.cpp overlay_node_foreach:144] DEBUG: enter
+[vvas_airender.cpp overlay_node_foreach:191] INFO: RESULT: (prediction node 2) chair(56) 97 143 637 473 (0.578628)
+[vvas_airender.cpp overlay_node_foreach:202] DEBUG: Drawing rectangle for NV12 image
+[vvas_airender.cpp overlay_node_foreach:144] DEBUG: enter
+[vvas_airender.cpp overlay_node_foreach:191] INFO: RESULT: (prediction node 3) chair(56) 380 195 637 441 (0.675602)
+[vvas_airender.cpp overlay_node_foreach:202] DEBUG: Drawing rectangle for NV12 image
+[vvas_airender.cpp overlay_node_foreach:144] DEBUG: enter
+[vvas_airender.cpp overlay_node_foreach:191] INFO: RESULT: (prediction node 4) chair(56) 160 216 226 383 (0.434068)
+[vvas_airender.cpp overlay_node_foreach:202] DEBUG: Drawing rectangle for NV12 image
+[vvas_airender.cpp overlay_node_foreach:144] DEBUG: enter
+[vvas_airender.cpp overlay_node_foreach:191] INFO: RESULT: (prediction node 5) chair(56) 25 214 111 315 (0.308846)
+[vvas_airender.cpp overlay_node_foreach:202] DEBUG: Drawing rectangle for NV12 image
+[vvas_airender.cpp overlay_node_foreach:144] DEBUG: enter
+[vvas_airender.cpp overlay_node_foreach:191] INFO: RESULT: (prediction node 6) chair(56) 114 210 148 291 (0.427763)
+[vvas_airender.cpp overlay_node_foreach:202] DEBUG: Drawing rectangle for NV12 image
+[vvas_airender.cpp xlnx_kernel_done:563] DEBUG: enter
+[vvas_airender.cpp xlnx_kernel_start:507] DEBUG: enter
+[vvas_airender.cpp xlnx_kernel_start:524] DEBUG: vvas_mata ptr 0xffff64003390
+[vvas_airender.cpp xlnx_kernel_start:528] DEBUG: Input frame is in NV12 format
+
+[vvas_airender.cpp xlnx_kernel_start:549] DEBUG: Prediction tree: 
+{
+  id : 58,
+  enabled : True,
+  bbox : {
+    x : 0
+    y : 0
+    width : 640
+    height : 480
+  },
+  track label : (null),
+  classes : [
+    
+  ],
+  predictions : [
+    {
+      id : 59,
+      enabled : True,
+      bbox : {
+        x : 45
+        y : 135
+        width : 571
+        height : 330
+      },
+      track label : (null),
+      classes : [
+        {
+          Id : 62
+          Class : 0
+          Label : person
+          Probability : 0.964351
+          Classes : 0
+        }, 
+      ],
+      predictions : [
+        
+      ]
+    }, {
+      id : 60,
+      enabled : True,
+      bbox : {
+        x : 97
+        y : 143
+        width : 540
+        height : 330
+      },
+      track label : (null),
+      classes : [
+        {
+          Id : 63
+          Class : 56
+          Label : chair
+          Probability : 0.578628
+          Classes : 0
+        }, 
+      ],
+      predictions : [
+        
+      ]
+    }, {
+      id : 61,
+      enabled : True,
+      bbox : {
+        x : 380
+        y : 190
+        width : 257
+        height : 246
+      },
+      track label : (null),
+      classes : [
+        {
+          Id : 64
+          Class : 56
+          Label : chair
+          Probability : 0.627657
+          Classes : 0
+        }, 
+      ],
+      predictions : [
+        
+      ]
+    }, {
+      id : 62,
+      enabled : True,
+      bbox : {
+        x : 157
+        y : 216
+        width : 66
+        height : 167
+      },
+      track label : (null),
+      classes : [
+        {
+          Id : 65
+          Class : 56
+          Label : chair
+          Probability : 0.495711
+          Classes : 0
+        }, 
+      ],
+      predictions : [
+        
+      ]
+    }, {
+      id : 63,
+      enabled : True,
+      bbox : {
+        x : 25
+        y : 214
+        width : 86
+        height : 101
+      },
+      track label : (null),
+      classes : [
+        {
+          Id : 66
+          Class : 56
+          Label : chair
+          Probability : 0.363448
+          Classes : 0
+        }, 
+      ],
+      predictions : [
+        
+      ]
+    }, {
+      id : 64,
+      enabled : True,
+      bbox : {
+        x : 114
+        y : 210
+        width : 34
+        height : 81
+      },
+      track label : (null),
+      classes : [
+        {
+          Id : 67
+          Class : 56
+          Label : chair
+          Probability : 0.491007
+          Classes : 0
+        }, 
+      ],
+      predictions : [
+        
+      ]
+    }, {
+      id : 65,
+      enabled : True,
+      bbox : {
+        x : 591
+        y : 199
+        width : 46
+        height : 64
+      },
+      track label : (null),
+      classes : [
+        {
+          Id : 68
+          Class : 56
+          Label : chair
+          Probability : 0.359635
+          Classes : 0
+        }, 
+      ],
+      predictions : [
+        
+      ]
+    }, 
+  ]
+}
+[vvas_airender.cpp overlay_node_foreach:144] DEBUG: enter
+[vvas_airender.cpp overlay_node_foreach:144] DEBUG: enter
+[vvas_airender.cpp overlay_node_foreach:191] INFO: RESULT: (prediction node 59) person(0) 45 135 616 465 (0.964351)
+[vvas_airender.cpp overlay_node_foreach:202] DEBUG: Drawing rectangle for NV12 image
+[vvas_airender.cpp overlay_node_foreach:144] DEBUG: enter
+[vvas_airender.cpp overlay_node_foreach:191] INFO: RESULT: (prediction node 60) chair(56) 97 143 637 473 (0.578628)
+[vvas_airender.cpp overlay_node_foreach:202] DEBUG: Drawing rectangle for NV12 image
+[vvas_airender.cpp overlay_node_foreach:144] DEBUG: enter
+[vvas_airender.cpp overlay_node_foreach:191] INFO: RESULT: (prediction node 61) chair(56) 380 190 637 436 (0.627657)
+[vvas_airender.cpp overlay_node_foreach:202] DEBUG: Drawing rectangle for NV12 image
+[vvas_airender.cpp overlay_node_foreach:144] DEBUG: enter
+[vvas_airender.cpp overlay_node_foreach:191] INFO: RESULT: (prediction node 62) chair(56) 157 216 223 383 (0.495711)
+[vvas_airender.cpp overlay_node_foreach:202] DEBUG: Drawing rectangle for NV12 image
+[vvas_airender.cpp overlay_node_foreach:144] DEBUG: enter
+[vvas_airender.cpp overlay_node_foreach:191] INFO: RESULT: (prediction node 63) chair(56) 25 214 111 315 (0.363448)
+[vvas_airender.cpp overlay_node_foreach:202] DEBUG: Drawing rectangle for NV12 image
+[vvas_airender.cpp overlay_node_foreach:144] DEBUG: enter
+[vvas_airender.cpp overlay_node_foreach:191] INFO: RESULT: (prediction node 64) chair(56) 114 210 148 291 (0.491007)
+[vvas_airender.cpp overlay_node_foreach:202] DEBUG: Drawing rectangle for NV12 image
+[vvas_airender.cpp overlay_node_foreach:144] DEBUG: enter
+[vvas_airender.cpp overlay_node_foreach:191] INFO: RESULT: (prediction node 65) chair(56) 591 199 637 263 (0.359635)
+[vvas_airender.cpp overlay_node_foreach:202] DEBUG: Drawing rectangle for NV12 image
+[vvas_airender.cpp xlnx_kernel_done:563] DEBUG: enter
+[vvas_airender.cpp xlnx_kernel_start:507] DEBUG: enter
+[vvas_airender.cpp xlnx_kernel_start:524] DEBUG: vvas_mata ptr 0xffff8c00cc40
+[vvas_airender.cpp xlnx_kernel_start:528] DEBUG: Input frame is in NV12 format
