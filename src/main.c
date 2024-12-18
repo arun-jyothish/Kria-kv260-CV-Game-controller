@@ -1,13 +1,12 @@
-#include <stdio.h>
 #include <stdlib.h>
+#include <stdio.h>
 
 int main() {
     char buffer[128];
-    char result[1024] = ""; // To store the full output
     FILE *pipe;
 
     // Open a pipe to execute the command and read its output
-    pipe = popen("echo bash", "r");
+    pipe = popen("mosquitto_sub -t topic1", "r");
     if (!pipe) {
         perror("popen failed");
         return 1;
@@ -16,7 +15,7 @@ int main() {
     // Read the output line by line
     while (fgets(buffer, sizeof(buffer), pipe) != NULL) {
         // Append the output to the result
-        strcat(result, buffer);
+        printf("Topic1: %s\n", buffer);
     }
 
     // Close the pipe
@@ -26,7 +25,8 @@ int main() {
     }
 
     // Print the captured output
-    printf("Command output: %s", result);
+    /* printf("Command output: %s", buff); */
+    printf("closed !!");
 
     return 0;
 }
