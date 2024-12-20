@@ -27,12 +27,14 @@ int main() {
     // Configure server address
     server_addr.sin_family = AF_INET;
     server_addr.sin_port = htons(PORT);
-    if (inet_pton(AF_INET, "127.0.0.1", &server_addr.sin_addr) <= 0) {
-      perror("Invalid address or Address not supported");
-      close(sockfd);
-      exit(EXIT_FAILURE);
-    }
-    server_addr.sin_addr.s_addr = INADDR_ANY;
+    server_addr.sin_addr.s_addr = inet_addr("10.42.0.10"); // Server IP address
+    /* if (inet_pton(AF_INET, "127.0.0.1", &server_addr.sin_addr) <= 0) { */
+    /* if (inet_pton(AF_INET, "10.42.0.10", &server_addr.sin_addr) <= 0) { */
+    /*     perror("Invalid address or Address not supported"); */
+    /*     close(sockfd); */
+    /*     exit(EXIT_FAILURE); */
+    /* } */
+    /* server_addr.sin_addr.s_addr = INADDR_ANY; */
 
     // Send message to server
     const char *msg = "Hello, Server!";
