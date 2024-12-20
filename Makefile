@@ -1,7 +1,7 @@
 CROSS_COMPILER := aarch64-linux-gnu-gcc
 COMPILER := gcc
 
-all: create-build-dir kria-app pc-app post-build
+all: create-build-dir kria-app pc-app parse-app post-build
 
 create-build-dir:
 	@mkdir -p ./build
@@ -15,6 +15,10 @@ pc-app: create-build-dir
 	@echo "Generating HOST-PC Application ..\n"
 	@${COMPILER} -o ./build/host-pc-app host-pc-app.c
 
-post-build: ./build/kv260-client ./build/host-pc-app
+parse-app: create-build-dir
+	@echo "Generating parse app Application ..\n"
+	@${CROSS_COMPILER} -o ./build/parse-app parse.c
+
+post-build: ./build/kv260-client ./build/parse-app
 	@echo "Copying client app to /srv/nfs ..\n"
 	@cp $^ /srv/nfs/
