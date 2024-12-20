@@ -1,53 +1,26 @@
 #include <errno.h>
+#include <fcntl.h>
 #include <stdio.h>
 #include <string.h>
-
-#include <fcntl.h>
-#include <string.h>
-
-/*
- *  Find exact word match and seek file descriptor to that point
- */
-int word_finder(FILE *fd, const char *match_word);
-
-/*
- *  Print current Seek point to next occurance of character provided
- */
-void print_section(FILE *fd, char stop_chara);
-
-/*
- *  Structure that saves parsed values from pipes
- */
-typedef struct {
-  int x_value;
-  int y_value;
-  int width;
-  int height;
-  char label[20];
-} CV_Parsed_Parameters;
-
-/*
- * Print parsed values, bounding box co-ordinates
- * Object class, its width and height
- */
-void print_parsed_values(const CV_Parsed_Parameters *st);
-
-/*
- * Parse Values from file descriptor
- * x, y ,width, height, class ..etc
- */
-void parse_values(FILE *fd, CV_Parsed_Parameters *st);
-
+#include <sys/stat.h>
+#include "parse.h"
 
 /*
  * Main 
  */
-void main() {
+int main() {
   /* FILE *fd = fopen("inference.txt", "r"); */
-  FILE *fd = fopen("pipe1", "r");
+
+  // Create the named pipe (FIFO)
+  if (mkfifo(PIPE_NAME, 0666) == -1) {
+    perror("mkfifo");
+    /* return 1; */
+  }
+
+  FILE *fd = fopen("cv_pipe", "r");
   perror("Opening File");
   if (fd == NULL)
-    return;
+    return -1;
 
   /* print_section(fd, '}'); */
   /* return; */
@@ -56,15 +29,18 @@ loop1:
   parse_values(fd, &person);
   print_parsed_values(&person);
   /* goto loop1; */
+  return 0;
 }
 
 void print_parsed_values(const CV_Parsed_Parameters *st) {
+  char buffer[128];
   puts("------------------------------------");
-  printf("x_value: %d\t\t", st->x_value);
-  printf("y_value: %d\t\t", st->y_value);
-  printf("width: %d\t\t", st->width);
-  printf("height: %d\t\t", st->height);
-  printf("label: %s\n", st->label);
+  sprintf(buffer,"x_value: %d\t\t", st->x_value);
+  sprintf(buffer+strlen(buffer),"y_value: %d\t\t", st->y_value);
+  sprintf(buffer+strlen(buffer),"width: %d\t\t", st->width);
+  sprintf(buffer+strlen(buffer),"height: %d\t\t", st->height);
+  sprintf(buffer+strlen(buffer),"label: %s\n", st->label);
+  printf("%s",buffer);
   puts("------------------------------------");
 }
 
