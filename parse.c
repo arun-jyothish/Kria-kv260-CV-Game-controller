@@ -2,10 +2,22 @@
 #include <stdio.h>
 #include <string.h>
 
-int word_finder(FILE *fd, const char *match_word);
-void print_section(FILE *fd, char stop_chara);
-void parse_values(FILE *fd, const char *word);
+#include <fcntl.h>
+#include <string.h>
 
+/*
+ *  Find exact word match and seek file descriptor to that point
+ */
+int word_finder(FILE *fd, const char *match_word);
+
+/*
+ *  Print current Seek point to next occurance of character provided
+ */
+void print_section(FILE *fd, char stop_chara);
+
+/*
+ *  Structure that saves parsed values from pipes
+ */
 typedef struct {
   int x_value;
   int y_value;
@@ -14,45 +26,45 @@ typedef struct {
   char label[20];
 } CV_Parsed_Parameters;
 
+/*
+ * Print parsed values, bounding box co-ordinates
+ * Object class, its width and height
+ */
 void print_parsed_values(const CV_Parsed_Parameters *st);
 
+/*
+ * Parse Values from file descriptor
+ * x, y ,width, height, class ..etc
+ */
+void parse_values(FILE *fd, CV_Parsed_Parameters *st);
+
+
+/*
+ * Main 
+ */
 void main() {
-  FILE *fd = fopen("inference.txt", "r");
+  /* FILE *fd = fopen("inference.txt", "r"); */
+  FILE *fd = fopen("pipe1", "r");
   perror("Opening File");
   if (fd == NULL)
     return;
 
+  /* print_section(fd, '}'); */
+  /* return; */
   CV_Parsed_Parameters person;
-  if (word_finder(fd, "DEBUG: Prediction tree:"))
-    if (word_finder(fd, "predictions : "))
-      if (word_finder(fd, "bbox : ")) {
-
-        word_finder(fd, "x : ");
-        fscanf(fd, "%d", &person.x_value);
-        word_finder(fd, "y : ");
-        fscanf(fd, "%d", &person.y_value);
-        word_finder(fd, "width : ");
-        fscanf(fd, "%d", &person.width);
-        word_finder(fd, "height : ");
-        fscanf(fd, "%d", &person.height);
-
-        if (word_finder(fd, "classes : "))
-          if (word_finder(fd, "Label : ")) {
-            fscanf(fd, "%s", person.label);
-          }
-
-        /* print_section(fd, ']'); */
-      }
+loop1:
+  parse_values(fd, &person);
   print_parsed_values(&person);
+  /* goto loop1; */
 }
 
 void print_parsed_values(const CV_Parsed_Parameters *st) {
   puts("------------------------------------");
-  printf("x_value:       %d\n", st->x_value);
-  printf("y_value:       %d\n", st->y_value);
-  printf("width:         %d\n", st->width);
-  printf("height:        %d\n", st->height);
-  printf("label:         %s\n", st->label);
+  printf("x_value: %d\t\t", st->x_value);
+  printf("y_value: %d\t\t", st->y_value);
+  printf("width: %d\t\t", st->width);
+  printf("height: %d\t\t", st->height);
+  printf("label: %s\n", st->label);
   puts("------------------------------------");
 }
 
@@ -61,51 +73,51 @@ int word_finder(FILE *fd, const char *match_word) {
   int word_match = 0;
   char c;
   int word_len = strlen(match_word);
-
+  /* while (read(fd, &c, 1) > 0) { */
   while ((c = getc(fd)) != EOF) {
     for (int i = 0; i < word_len; ++i) {
       if (match_word[i] != c)
         break;
       if (i == word_len - 1) {
-        printf("Match Found: %s\n", match_word);
+        printf("\033[032m Match Found: %s\n\033[0m", match_word);
         /* provided word match found return true  */
         return 1;
       }
       c = getc(fd);
     }
   }
-  printf("!! No Match Found: %s\n", match_word);
+  printf("\033[31m !! No Match Found: %s\n\033[0m", match_word);
   return 0;
 }
 
 void print_section(FILE *fd, char stop_chara) {
   char c;
   while (c = getc(fd), c) {
+    /* while (read(*fd, &c, 1) > 0) { */
     if (c == stop_chara)
       return;
     putc(c, stdout);
   }
 }
-/*
- *  control chars  "{ , : [  ] }"
- *  chk if any non-control char is occured after <SPC> char. if it
- *  occured that <SPC> char is valid. else ignore
- */
 
-void parse_values(FILE *fd, const char *word) {
-  int val;
-  char c;
-  word_finder(fd, word);
+void parse_values(FILE *fd, CV_Parsed_Parameters *st) {
 
-  while ((c = getc(fd)) != EOF) {
-    putc(c, stdout);
-  }
-  /*
-fscanf(fd, "x : %d", &val);
-printf("val: %d\n", val);
+  if (word_finder(fd, "DEBUG: Prediction tree:"))
+    if (word_finder(fd, "predictions : "))
+      if (word_finder(fd, "bbox : ")) {
 
-print_section(fd, ']');
-printf("\n");
-fclose(fd);
-     */
+        word_finder(fd, "x : ");
+        fscanf(fd, "%d", &st->x_value);
+        word_finder(fd, "y : ");
+        fscanf(fd, "%d", &st->y_value);
+        word_finder(fd, "width : ");
+        fscanf(fd, "%d", &st->width);
+        word_finder(fd, "height : ");
+        fscanf(fd, "%d", &st->height);
+
+        if (word_finder(fd, "classes : "))
+          if (word_finder(fd, "Label : ")) {
+            fscanf(fd, "%s", st->label);
+          }
+      }
 }
