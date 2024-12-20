@@ -4,6 +4,7 @@
 #include <string.h>
 #include <sys/stat.h>
 #include <unistd.h> // For close()
+#include <arpa/inet.h>
 #include "parse.h"
 
 #define PIPE_NAME "cv_pipe" // Define the name of the pipe
@@ -99,4 +100,41 @@ void parse_values(FILE *fd, CV_Parsed_Parameters *st) {
                         fscanf(fd, "%s", st->label);
                     }
             }
+}
+
+int init_comm()
+{
+  int sockfd;
+  char buffer[BUF_SIZE];
+  struct sockaddr_in server_addr;
+
+  // Create socket
+  if ((sockfd = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
+    perror("Socket creation failed");
+    exit(EXIT_FAILURE);
+  }
+
+  memset(&server_addr, 0, sizeof(server_addr));
+
+  // Configure server address
+  server_addr.sin_family = AF_INET;
+  server_addr.sin_port = htons(PORT);
+  server_addr.sin_addr.s_addr = inet_addr("10.42.0.10"); // Server IP address
+
+  send_msg(sockfd, msg, &server_addr);
+  
+  send_msg (int sockfd, char *msg,  const struct sockaddr* server_addr_p)
+  // Send message to server
+  const char *msg = "Hello, Server!";
+  sendto(sockfd, msg, strlen(msg), 0, (const struct sockaddr *)server_addr_p, sizeof(*server_addr_p));
+  printf("Message sent to server\n");
+
+  // Receive acknowledgment from server
+  socklen_t len = sizeof(server_addr);
+  int n = recvfrom(sockfd, buffer, BUF_SIZE, 0, (struct sockaddr *)server_addr_p, &len);
+  buffer[n] = '\0'; // Null-terminate the received string
+  printf("Server: %s\n", buffer);
+
+  close(sockfd);
+  return 0;
 }
