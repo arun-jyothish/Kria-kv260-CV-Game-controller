@@ -11,58 +11,78 @@
 
 #define PORT 8080
 #define BUF_SIZE 1024
+#define DELAY 10
+
+int setup_key_emulation();
+void sample_emu();
+void press_right(int delay);
+void press_up(int delay);
+void press_left(int delay);
 
 int main() {
   printf("Communication .. code\n");
 
+  setup_key_emulation();
+
   int sockfd;
-    char buffer[BUF_SIZE];
-    struct sockaddr_in server_addr, client_addr;
+  char buffer[BUF_SIZE];
+  struct sockaddr_in server_addr, client_addr;
 
-    // Create socket
-    if ((sockfd = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
-        perror("Socket creation failed");
-        exit(EXIT_FAILURE);
-    }
+  // Create socket
+  if ((sockfd = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
+    perror("Socket creation failed");
+    exit(EXIT_FAILURE);
+  }
 
-    memset(&server_addr, 0, sizeof(server_addr));
-    memset(&client_addr, 0, sizeof(client_addr));
+  memset(&server_addr, 0, sizeof(server_addr));
+  memset(&client_addr, 0, sizeof(client_addr));
 
-    // Configure server address
-    server_addr.sin_family = AF_INET;
-    server_addr.sin_addr.s_addr = INADDR_ANY;
-    server_addr.sin_port = htons(PORT);
-    /* if (inet_pton(AF_INET, "127.0.0.1", &server_addr.sin_addr) <= 0) { */
-    /*     if (inet_pton(AF_INET, "10.42.0.10", &server_addr.sin_addr) <= 0) { */
-    /*       perror("Invalid address or Address not supported"); */
-    /*       close(sockfd); */
-    /*       exit(EXIT_FAILURE); */
-    /*     } */
-    /* // Bind the socket to the address */
-    if (bind(sockfd, (const struct sockaddr *)&server_addr, sizeof(server_addr)) < 0) {
-        perror("Bind failed");
-        close(sockfd);
-        exit(EXIT_FAILURE);
-    }
+  // Configure server address
+  server_addr.sin_family = AF_INET;
+  server_addr.sin_addr.s_addr = INADDR_ANY;
+  server_addr.sin_port = htons(PORT);
+  /* if (inet_pton(AF_INET, "127.0.0.1", &server_addr.sin_addr) <= 0) { */
+  /*     if (inet_pton(AF_INET, "10.42.0.10", &server_addr.sin_addr) <= 0) {
+   */
+  /*       perror("Invalid address or Address not supported"); */
+  /*       close(sockfd); */
+  /*       exit(EXIT_FAILURE); */
+  /*     } */
+  /* // Bind the socket to the address */
+  if (bind(sockfd, (const struct sockaddr *)&server_addr, sizeof(server_addr)) <
+      0) {
+    perror("Bind failed");
+    close(sockfd);
+    exit(EXIT_FAILURE);
+  }
 
-    socklen_t len = sizeof(client_addr);
-    int n;
+  socklen_t len = sizeof(client_addr);
+  int n;
 
-    printf("Server listening on port %d...\n", PORT);
+  printf("Server listening on port %d...\n", PORT);
 
-    while(1) {
-      
+  while (1) {
+
     // Receive message from client
-    n = recvfrom(sockfd, buffer, BUF_SIZE, 0, (struct sockaddr *)&client_addr, &len);
+    n = recvfrom(sockfd, buffer, BUF_SIZE, 0, (struct sockaddr *)&client_addr,
+                 &len);
     buffer[n] = '\0'; // Null-terminate the received string
     printf("Client: %s\n", buffer);
-    }
 
-    // Send acknowledgment to client
-    const char *ack = "Message received";
-    sendto(sockfd, ack, strlen(ack), 0, (const struct sockaddr *)&client_addr, len);
-    printf("Acknowledgment sent\n");
+    if( !strcmp(buffer, "RIGHT") )
+      press_right(DELAY);
+    if ( !strcmp(buffer, "LEFT"))
+      press_left(DELAY);
+    if (!strcmp(buffer, "STABLE"))
+      press_up(DELAY);
+  }
 
-    close(sockfd);
-    return 0;
+  // Send acknowledgment to client
+  const char *ack = "Message received";
+  sendto(sockfd, ack, strlen(ack), 0, (const struct sockaddr *)&client_addr,
+         len);
+  printf("Acknowledgment sent\n");
+
+  close(sockfd);
+  return 0;
 }

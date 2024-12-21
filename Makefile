@@ -13,7 +13,8 @@ kria-app: create-build-dir
 
 pc-app: create-build-dir
 	@echo "Generating HOST-PC Application ..\n"
-	@${COMPILER} -o ./build/host-pc-app host-pc-app.c
+# @${COMPILER} -o ./build/host-pc-app host-pc-app.c
+	@${COMPILER} -o ./build/host-pc-app host-pc-app.c host_pc/key_cntrl.c
 
 parse-app: create-build-dir
 	@echo "Generating parse app Application ..\n"
