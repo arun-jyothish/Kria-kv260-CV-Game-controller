@@ -1,0 +1,9 @@
+Client: x_value: 2		y_value: 32		width: 343		height: 424		label: person
+
+Client: x_value: 2		y_value: 32		width: 337		height: 424		label: person
+
+Client: x_value: 2		y_value: 32		width: 337		height: 424		label: person
+
+Client: x_value: 2		y_value: 32		width: 334		height: 424		label: person
+
+

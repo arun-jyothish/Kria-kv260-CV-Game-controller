@@ -10,6 +10,18 @@
 #define PORT 8080
 #define BUF_SIZE 1024
 
+#define SHIFT_THRESHOLD 50
+#define X_TOLERANCE 20
+
+
+
+typedef enum {
+  UP,
+  DOWN,
+  LEFT,
+  RIGHT
+} control_t;
+
 /*
  *  Structure that saves parsed values from pipes
  */
@@ -20,6 +32,8 @@ typedef struct {
   int height;
   char label[20];
 } CV_Parsed_Parameters;
+
+control_t control_logic(const CV_Parsed_Parameters *st);
 
 void send_msg(char *msg);
 /* void send_msg(); */
@@ -46,6 +60,7 @@ char* print_parsed_values(const CV_Parsed_Parameters *st);
  * x, y ,width, height, class ..etc
  */
 void parse_values(FILE *fd, CV_Parsed_Parameters *st);
+
 
 #define PIPE_NAME "cv_pipe" // Define the name of the pipe
 
@@ -76,6 +91,7 @@ int main() {
         while (1) {
             parse_values(fd, &person);
             char *gen_msg = print_parsed_values(&person);
+	    control_logic(&person);
 	    send_msg(gen_msg);
             /* send_msg(); */
             fflush(stdout); // Ensure output is printed immediately
@@ -95,7 +111,7 @@ char* print_parsed_values(const CV_Parsed_Parameters *st) {
     sprintf(buffer + strlen(buffer), "width: %d\t\t", st->width);
     sprintf(buffer + strlen(buffer), "height: %d\t\t", st->height);
     sprintf(buffer + strlen(buffer), "label: %s\n", st->label);
-    printf("%s", buffer);
+    /* printf("%s", buffer); */
     puts("------------------------------------");
     return buffer;
 }
@@ -108,13 +124,13 @@ int word_finder(FILE *fd, const char *match_word) {
         for (int i = 0; i < word_len; ++i) {
             if (match_word[i] != c) break;
             if (i == word_len - 1) {
-                printf("\033[032m Match Found: %s\n\033[0m", match_word);
+                /* printf("\033[032m Match Found: %s\n\033[0m", match_word); */
                 return 1; // Match found
             }
             c = getc(fd);
         }
     }
-    printf("\033[31m !! No Match Found: %s\n\033[0m", match_word);
+    /* printf("\033[31m !! No Match Found: %s\n\033[0m", match_word); */
     return 0;
 }
 
@@ -185,4 +201,58 @@ void send_msg(char *msg)
    */
 
   /* close(sockfd); */
+}
+
+typedef enum{
+  NO_SHIFT,
+  LEFT_SHIFT,
+  RIGHT_SHIFT
+} shift_t;
+
+control_t control_logic(const CV_Parsed_Parameters *st) {
+  static CV_Parsed_Parameters prev_st;
+  int delta_x = st->x_value - prev_st.x_value;
+  int delta_y = st->y_value - prev_st.y_value;
+
+  int delta_width = st->width - prev_st.width;
+  int delta_height = st->height - prev_st.height;
+
+  int frame_shift = 0;
+
+  // find mod tolerance
+  /* delta_x = delta_x < 0 ? -1 * delta_x, frame_shift = LEFT_SHIFT : delta_x; */
+  delta_x = delta_x < 0 ? -1 * delta_x : delta_x;
+  /* frame_shift = delta_x > 0 ? RIGHT_SHIFT : NO_SHIFT; */
+
+  /*
+
+  switch (frame_shift) {
+  NO_SHIFT:
+    break;
+  LEFT_SHIFT:
+    break;
+  RIGHT_SHIFT:
+    break;
+  default:
+    printf("frameshift error \n");
+  }
+   */
+
+  #define MAX_WIDTH 640
+  /* if (delta_x < X_TOLERANCE && SHIFT_THRESHOLD > delta_width) */
+
+  if (strcmp(st->label, "person")) {
+    printf("!!! not a person ..\n");
+    return 0;
+  }
+
+  if (st->x_value < MAX_WIDTH/3)
+      printf("\033[033m right shift.........>\n\033[0m");
+    else if (st->x_value > 2*MAX_WIDTH/3)
+      printf("\033[031m left shift.........>\n\033[0m");
+    else
+      printf("\033[032m.........>\n\033[0m");
+
+  prev_st.width = st->width;
+  prev_st.x_value = st->x_value;
 }

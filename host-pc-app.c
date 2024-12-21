@@ -57,7 +57,7 @@ int main() {
     buffer[n] = '\0'; // Null-terminate the received string
     printf("Client: %s\n", buffer);
     }
-    
+
     // Send acknowledgment to client
     const char *ack = "Message received";
     sendto(sockfd, ack, strlen(ack), 0, (const struct sockaddr *)&client_addr, len);
