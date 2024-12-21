@@ -92,7 +92,7 @@ int main() {
             parse_values(fd, &person);
             char *gen_msg = print_parsed_values(&person);
 	    control_logic(&person);
-	    send_msg(gen_msg);
+	    /* send_msg(gen_msg); */
             /* send_msg(); */
             fflush(stdout); // Ensure output is printed immediately
         }
@@ -187,7 +187,8 @@ void send_msg(char *msg)
 
   // Send message to server
   /* const char *msg = "Hello, Server!"; */
-  sendto(sockfd, msg, strlen(msg), 0, (const struct sockaddr *)&server_addr, sizeof(server_addr));
+  sendto(sockfd, msg, strlen(msg), 0, (const struct sockaddr *)&server_addr,
+         sizeof(server_addr));
   printf("Message sent to server\n");
 
   // Receive acknowledgment from server
@@ -241,17 +242,28 @@ control_t control_logic(const CV_Parsed_Parameters *st) {
   #define MAX_WIDTH 640
   /* if (delta_x < X_TOLERANCE && SHIFT_THRESHOLD > delta_width) */
 
+  char right[] = "RIGHT";
+  char left[] = "LEFT";
+  char stable[] = "STABLE";
+
   if (strcmp(st->label, "person")) {
     printf("!!! not a person ..\n");
     return 0;
   }
 
-  if (st->x_value < MAX_WIDTH/3)
-      printf("\033[033m right shift.........>\n\033[0m");
-    else if (st->x_value > 2*MAX_WIDTH/3)
-      printf("\033[031m left shift.........>\n\033[0m");
-    else
-      printf("\033[032m.........>\n\033[0m");
+  if (st->x_value < MAX_WIDTH/3){
+    sendto(sockfd, right,  strlen(right), 0, (const struct sockaddr *)&server_addr,
+           sizeof(server_addr));
+    printf("\033[033m right shift.........>\n\033[0m");
+  } else if (st->x_value > 2 * MAX_WIDTH / 3) {
+    sendto(sockfd, left, strlen(left), 0, (const struct sockaddr *)&server_addr,
+           sizeof(server_addr));
+    printf("\033[031m left shift.........>\n\033[0m");
+  } else {
+    sendto(sockfd, stable, strlen(stable), 0, (const struct sockaddr *)&server_addr,
+           sizeof(server_addr));
+    printf("\033[032m.........>\n\033[0m");
+  }
 
   prev_st.width = st->width;
   prev_st.x_value = st->x_value;
