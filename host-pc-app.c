@@ -50,11 +50,14 @@ int main() {
 
     printf("Server listening on port %d...\n", PORT);
 
+    while(1) {
+      
     // Receive message from client
     n = recvfrom(sockfd, buffer, BUF_SIZE, 0, (struct sockaddr *)&client_addr, &len);
     buffer[n] = '\0'; // Null-terminate the received string
     printf("Client: %s\n", buffer);
-
+    }
+    
     // Send acknowledgment to client
     const char *ack = "Message received";
     sendto(sockfd, ack, strlen(ack), 0, (const struct sockaddr *)&client_addr, len);

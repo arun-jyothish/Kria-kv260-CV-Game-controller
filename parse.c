@@ -1,18 +1,57 @@
+#include <arpa/inet.h>
 #include <errno.h>
 #include <fcntl.h>
 #include <stdio.h>
 #include <string.h>
 #include <sys/stat.h>
 #include <unistd.h> // For close()
-#include <arpa/inet.h>
-#include "parse.h"
+#include <stdlib.h>
+
+#define PORT 8080
+#define BUF_SIZE 1024
+
+/*
+ *  Structure that saves parsed values from pipes
+ */
+typedef struct {
+  int x_value;
+  int y_value;
+  int width;
+  int height;
+  char label[20];
+} CV_Parsed_Parameters;
+
+void send_msg(char *msg);
+/* void send_msg(); */
+
+void init_comm(void);
+/*
+ *  Find exact word match and seek file descriptor to that point
+ */
+int word_finder(FILE *fd, const char *match_word);
+
+/*
+ *  Print current Seek point to next occurance of character provided
+ */
+void print_section(FILE *fd, char stop_chara);
+
+/*
+ * Print parsed values, bounding box co-ordinates
+ * Object class, its width and height
+ */
+char* print_parsed_values(const CV_Parsed_Parameters *st);
+
+/*
+ * Parse Values from file descriptor
+ * x, y ,width, height, class ..etc
+ */
+void parse_values(FILE *fd, CV_Parsed_Parameters *st);
 
 #define PIPE_NAME "cv_pipe" // Define the name of the pipe
 
-void print_parsed_values(const CV_Parsed_Parameters *st);
-int word_finder(FILE *fd, const char *match_word);
-void print_section(FILE *fd, char stop_chara);
-void parse_values(FILE *fd, CV_Parsed_Parameters *st);
+int sockfd;
+char buffer[BUF_SIZE];
+struct sockaddr_in server_addr;
 
 int main() {
     // Create the named pipe (FIFO)
@@ -30,12 +69,15 @@ int main() {
             return -1;
         }
 
+        init_comm();
         CV_Parsed_Parameters person;
 
         // Continuously read from the pipe
         while (1) {
             parse_values(fd, &person);
-            print_parsed_values(&person);
+            char *gen_msg = print_parsed_values(&person);
+	    send_msg(gen_msg);
+            /* send_msg(); */
             fflush(stdout); // Ensure output is printed immediately
         }
 
@@ -45,8 +87,8 @@ int main() {
     return 0;
 }
 
-void print_parsed_values(const CV_Parsed_Parameters *st) {
-    char buffer[128];
+char* print_parsed_values(const CV_Parsed_Parameters *st) {
+    static char buffer[128];
     puts("------------------------------------");
     sprintf(buffer, "x_value: %d\t\t", st->x_value);
     sprintf(buffer + strlen(buffer), "y_value: %d\t\t", st->y_value);
@@ -55,6 +97,7 @@ void print_parsed_values(const CV_Parsed_Parameters *st) {
     sprintf(buffer + strlen(buffer), "label: %s\n", st->label);
     printf("%s", buffer);
     puts("------------------------------------");
+    return buffer;
 }
 
 int word_finder(FILE *fd, const char *match_word) {
@@ -102,12 +145,9 @@ void parse_values(FILE *fd, CV_Parsed_Parameters *st) {
             }
 }
 
-int init_comm()
+void init_comm()
 {
-  int sockfd;
-  char buffer[BUF_SIZE];
-  struct sockaddr_in server_addr;
-
+  
   // Create socket
   if ((sockfd = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
     perror("Socket creation failed");
@@ -120,21 +160,29 @@ int init_comm()
   server_addr.sin_family = AF_INET;
   server_addr.sin_port = htons(PORT);
   server_addr.sin_addr.s_addr = inet_addr("10.42.0.10"); // Server IP address
+  /* server_addr.sin_addr.s_addr = inet_addr("127.0.0.1"); // Server IP address */
 
-  send_msg(sockfd, msg, &server_addr);
-  
-  send_msg (int sockfd, char *msg,  const struct sockaddr* server_addr_p)
+}
+
+void send_msg(char *msg)
+
+/* void send_msg() */
+{
+
   // Send message to server
-  const char *msg = "Hello, Server!";
-  sendto(sockfd, msg, strlen(msg), 0, (const struct sockaddr *)server_addr_p, sizeof(*server_addr_p));
+  /* const char *msg = "Hello, Server!"; */
+  sendto(sockfd, msg, strlen(msg), 0, (const struct sockaddr *)&server_addr, sizeof(server_addr));
   printf("Message sent to server\n");
 
   // Receive acknowledgment from server
-  socklen_t len = sizeof(server_addr);
-  int n = recvfrom(sockfd, buffer, BUF_SIZE, 0, (struct sockaddr *)server_addr_p, &len);
-  buffer[n] = '\0'; // Null-terminate the received string
-  printf("Server: %s\n", buffer);
+  /*
 
-  close(sockfd);
-  return 0;
+  socklen_t len = sizeof(server_addr);
+  int n = recvfrom(sockfd, buffer, BUF_SIZE, 0, (struct sockaddr *)&server_addr,
+  &len); buffer[n] = '\0'; // Null-terminate the received string printf("Server:
+  %s\n", buffer);
+  
+   */
+
+  /* close(sockfd); */
 }

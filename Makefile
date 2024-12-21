@@ -18,6 +18,7 @@ pc-app: create-build-dir
 parse-app: create-build-dir
 	@echo "Generating parse app Application ..\n"
 	@${CROSS_COMPILER} -o ./build/parse-app parse.c
+# @${COMPILER} -o ./build/parse-app parse.c
 
 post-build: ./build/kv260-client ./build/parse-app
 	@echo "Copying client app to /srv/nfs ..\n"
