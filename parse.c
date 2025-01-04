@@ -11,7 +11,8 @@
 #define BUF_SIZE 1024
 
 #define SHIFT_THRESHOLD 50
-#define X_TOLERANCE	20
+#define X_TOLERANCE 50
+#define Y_TOLERANCE 50
 #define MAX_HEIGHT	480
 #define MAX_WIDTH	640
 
@@ -22,6 +23,13 @@ typedef enum {
   RIGHT
 } control_t;
 
+#define RIGHT "RIGHT"
+#define LEFT "LEFT"
+#define UP "UP"
+#define DOWN "DOWN"
+#define STABLE "STABLE"
+#define BOTTOM_MARGIN 50
+#define TOP_MARGIN 50
 /*
  *  Structure that saves parsed values from pipes
  */
@@ -105,14 +113,14 @@ int main() {
 
 char* print_parsed_values(const CV_Parsed_Parameters *st) {
   static char buffer[128];
-  puts("------------------------------------");
+  /* puts("------------------------------------"); */
   sprintf(buffer, "x_value: %d\t\t", st->x_value);
   sprintf(buffer + strlen(buffer), "y_value: %d\t\t", st->y_value);
   sprintf(buffer + strlen(buffer), "width: %d\t\t", st->width);
   sprintf(buffer + strlen(buffer), "height: %d\t\t", st->height);
   sprintf(buffer + strlen(buffer), "label: %s\n", st->label);
-  printf("%s", buffer);
-  puts("------------------------------------");
+  /* printf("%s", buffer); */
+  /* puts("------------------------------------"); */
   return buffer;
 }
 
@@ -124,13 +132,13 @@ int word_finder(FILE *fd, const char *match_word) {
     for (int i = 0; i < word_len; ++i) {
       if (match_word[i] != c) break;
       if (i == word_len - 1) {
-	printf("\033[032m Match Found: %s\n\033[0m", match_word);
+	/* printf("\033[032m Match Found: %s\n\033[0m", match_word); */
 	return 1; // Match found
       }
       c = getc(fd);
     }
   }
-  printf("\033[31m !! No Match Found: %s\n\033[0m", match_word);
+  /* printf("\033[31m !! No Match Found: %s\n\033[0m", match_word); */
   return 0;
 }
 
@@ -218,71 +226,33 @@ control_t control_logic(const CV_Parsed_Parameters *st) {
   int delta_width = st->width - prev_st.width;
   int delta_height = st->height - prev_st.height;
 
-  int frame_shift = 0;
+  /* printf("_______________delta_x = %d\n", delta_x); */
+  /* printf("_______________delta_y = %d\n", delta_y); */
 
-  // find mod tolerance
-  /* delta_x = delta_x < 0 ? -1 * delta_x, frame_shift = LEFT_SHIFT : delta_x; */
-  delta_x = delta_x < 0 ? -1 * delta_x : delta_x;
-  /* frame_shift = delta_x > 0 ? RIGHT_SHIFT : NO_SHIFT; */
-
-  /*
-
-    switch (frame_shift) {
-    NO_SHIFT:
-    break;
-    LEFT_SHIFT:
-    break;
-    RIGHT_SHIFT:
-    break;
-    default:
-    printf("frameshift error \n");
-    }
-  */
-
-  /* if (delta_x < X_TOLERANCE && SHIFT_THRESHOLD > delta_width) */
-
-#define RIGHT		"RIGHT"
-#define LEFT		"LEFT"
-#define UP		"UP"
-#define DOWN		"DOWN"
-#define STABLE		"STABLE"
-#define BOTTOM_MARGIN	50
-#define TOP_MARGIN	50
-  /*
-
-    if (strcmp(st->label, "person")) {
-    printf("!!! not a person ..\n");
-    return 0;
-    }
-  */
-
-  if (st->x_value < MAX_WIDTH/3){
-    sendto(sockfd, RIGHT,  strlen(RIGHT), 0, (const struct sockaddr *)&server_addr,
-           sizeof(server_addr));
-    printf("\033[033m ........ RIGHT ........>\n\033[0m");
-  }
-  if (st->x_value > 2 * MAX_WIDTH / 3) {
+  if (delta_x > 0 && delta_x > X_TOLERANCE) {
     sendto(sockfd, LEFT, strlen(LEFT), 0, (const struct sockaddr *)&server_addr,
            sizeof(server_addr));
-    printf("\033[031m ........ LEFT .........>\n\033[0m");
+    printf("\033[031m ........ LEFT ...........>\n\033[0m");
+  } else  if (delta_x < 0 && -delta_x > X_TOLERANCE) {
+    sendto(sockfd, RIGHT, strlen(RIGHT), 0,
+           (const struct sockaddr *)&server_addr, sizeof(server_addr));
+    printf("\033[032m ........ RIGHT ...........>\n\033[0m");
   }
-  if (st->y_value < TOP_MARGIN) {
-    sendto(sockfd, UP, strlen(UP), 0,
-	   (const struct sockaddr *)&server_addr, sizeof(server_addr));
-    printf("\033[035m ........ UP ...........>\n\033[0m");
-  }
-  if (st->y_value + st->height > MAX_HEIGHT - BOTTOM_MARGIN) {
+
+  if (delta_y > 0 && delta_y > Y_TOLERANCE) {
     sendto(sockfd, DOWN, strlen(DOWN), 0, (const struct sockaddr *)&server_addr,
-	   sizeof(server_addr));
+           sizeof(server_addr));
     printf("\033[034m ........ DOWN ...........>\n\033[0m");
+  } else if (delta_y < 0 && -delta_y > Y_TOLERANCE) {
+    sendto(sockfd, UP, strlen(UP), 0, (const struct sockaddr *)&server_addr,
+           sizeof(server_addr));
+    printf("\033[033m ........ UP ...........>\n\033[0m");
   }
-  /* if (st->x */
-  /*     ) { */
-  /*   sendto(sockfd, STABLE, strlen(STABLE), 0, */
-  /* 	   (const struct sockaddr *)&server_addr, sizeof(server_addr)); */
-  /*   printf("\033[032m ........STABLE.........>\n\033[0m"); */
-  /* } */
 
   prev_st.width = st->width;
+  prev_st.height = st->height;
   prev_st.x_value = st->x_value;
+  prev_st.y_value = st->y_value;
+
+  return 0;
 }
