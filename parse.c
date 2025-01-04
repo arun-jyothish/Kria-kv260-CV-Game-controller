@@ -11,8 +11,8 @@
 #define BUF_SIZE 1024
 
 #define SHIFT_THRESHOLD 50
-#define X_TOLERANCE 50
-#define Y_TOLERANCE 50
+#define X_TOLERANCE 25
+#define Y_TOLERANCE 16
 #define MAX_HEIGHT	480
 #define MAX_WIDTH	640
 
@@ -171,7 +171,7 @@ void parse_values(FILE *fd, CV_Parsed_Parameters *st) {
 
 void init_comm()
 {
-  
+
   // Create socket
   if ((sockfd = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
     perror("Socket creation failed");
@@ -197,26 +197,18 @@ void send_msg(char *msg)
   /* const char *msg = "Hello, Server!"; */
   sendto(sockfd, msg, strlen(msg), 0, (const struct sockaddr *)&server_addr,
          sizeof(server_addr));
-  printf("Message sent to server\n");
+  /* printf("Message sent to server\n"); */
 
   // Receive acknowledgment from server
   /*
-
     socklen_t len = sizeof(server_addr);
     int n = recvfrom(sockfd, buffer, BUF_SIZE, 0, (struct sockaddr *)&server_addr,
     &len); buffer[n] = '\0'; // Null-terminate the received string printf("Server:
     %s\n", buffer);
-  
   */
 
   /* close(sockfd); */
 }
-
-typedef enum{
-  NO_SHIFT,
-  LEFT_SHIFT,
-  RIGHT_SHIFT
-} shift_t;
 
 control_t control_logic(const CV_Parsed_Parameters *st) {
   static CV_Parsed_Parameters prev_st;
@@ -230,22 +222,18 @@ control_t control_logic(const CV_Parsed_Parameters *st) {
   /* printf("_______________delta_y = %d\n", delta_y); */
 
   if (delta_x > 0 && delta_x > X_TOLERANCE) {
-    sendto(sockfd, LEFT, strlen(LEFT), 0, (const struct sockaddr *)&server_addr,
-           sizeof(server_addr));
+    send_msg(LEFT);
     printf("\033[031m ........ LEFT ...........>\n\033[0m");
   } else  if (delta_x < 0 && -delta_x > X_TOLERANCE) {
-    sendto(sockfd, RIGHT, strlen(RIGHT), 0,
-           (const struct sockaddr *)&server_addr, sizeof(server_addr));
+    send_msg(RIGHT);
     printf("\033[032m ........ RIGHT ...........>\n\033[0m");
   }
 
   if (delta_y > 0 && delta_y > Y_TOLERANCE) {
-    sendto(sockfd, DOWN, strlen(DOWN), 0, (const struct sockaddr *)&server_addr,
-           sizeof(server_addr));
+    send_msg(DOWN);
     printf("\033[034m ........ DOWN ...........>\n\033[0m");
   } else if (delta_y < 0 && -delta_y > Y_TOLERANCE) {
-    sendto(sockfd, UP, strlen(UP), 0, (const struct sockaddr *)&server_addr,
-           sizeof(server_addr));
+    send_msg(UP);
     printf("\033[033m ........ UP ...........>\n\033[0m");
   }
 
