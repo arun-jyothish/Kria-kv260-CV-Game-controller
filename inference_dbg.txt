@@ -1,0 +1,40 @@
+[vvas_airender.cpp xlnx_kernel_start:549] DEBUG: Prediction tree: 
+{
+  id : 41512,
+  enabled : True,
+  bbox : {
+    x : 0
+    y : 0
+    width : 640
+    height : 480
+  },
+  track label : (null),
+  classes : [
+    
+  ],
+  predictions : [
+    {
+      id : 41513,
+      enabled : True,
+      bbox : {
+        x : 237
+        y : 233
+        width : 135
+        height : 173
+      },
+      track label : (null),
+      classes : [
+        {
+          Id : 27692
+          Class : -1
+          Label : (null)
+          Probability : 0.996612
+          Classes : 0
+        }, 
+      ],
+      predictions : [
+        
+      ]
+    }, 
+  ]
+}

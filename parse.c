@@ -111,7 +111,7 @@ char* print_parsed_values(const CV_Parsed_Parameters *st) {
     sprintf(buffer + strlen(buffer), "width: %d\t\t", st->width);
     sprintf(buffer + strlen(buffer), "height: %d\t\t", st->height);
     sprintf(buffer + strlen(buffer), "label: %s\n", st->label);
-    /* printf("%s", buffer); */
+    printf("%s", buffer);
     puts("------------------------------------");
     return buffer;
 }
@@ -124,13 +124,13 @@ int word_finder(FILE *fd, const char *match_word) {
         for (int i = 0; i < word_len; ++i) {
             if (match_word[i] != c) break;
             if (i == word_len - 1) {
-                /* printf("\033[032m Match Found: %s\n\033[0m", match_word); */
+                printf("\033[032m Match Found: %s\n\033[0m", match_word);
                 return 1; // Match found
             }
             c = getc(fd);
         }
     }
-    /* printf("\033[31m !! No Match Found: %s\n\033[0m", match_word); */
+    printf("\033[31m !! No Match Found: %s\n\033[0m", match_word);
     return 0;
 }
 
@@ -245,11 +245,13 @@ control_t control_logic(const CV_Parsed_Parameters *st) {
   char right[] = "RIGHT";
   char left[] = "LEFT";
   char stable[] = "STABLE";
+  /*
 
   if (strcmp(st->label, "person")) {
     printf("!!! not a person ..\n");
     return 0;
   }
+   */
 
   if (st->x_value < MAX_WIDTH/3){
     sendto(sockfd, right,  strlen(right), 0, (const struct sockaddr *)&server_addr,
