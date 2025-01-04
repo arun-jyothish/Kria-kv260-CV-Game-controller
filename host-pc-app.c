@@ -11,12 +11,13 @@
 
 #define PORT 8080
 #define BUF_SIZE 1024
-#define DELAY 10
+#define DELAY 100
 
 int setup_key_emulation();
 void sample_emu();
 void press_right(int delay);
 void press_up(int delay);
+void press_down(int delay);
 void press_left(int delay);
 
 int main() {
@@ -61,6 +62,10 @@ int main() {
 
   printf("Server listening on port %d...\n", PORT);
 
+  char prev_data[strlen(buffer)];
+  int rep_count = 0;
+#define  MAX_REP	8
+
   while (1) {
 
     // Receive message from client
@@ -69,10 +74,25 @@ int main() {
     buffer[n] = '\0'; // Null-terminate the received string
     printf("Client: %s\n", buffer);
 
-    if( !strcmp(buffer, "RIGHT") )
-      press_right(DELAY);
+    /*
+     *check if current data is same as previous data, if so continue till MAX_REP
+     */
+    if (!strcmp(buffer, prev_data)){
+      if (rep_count < MAX_REP)
+	continue;
+      ++rep_count;
+    } else {
+      rep_count = 0;					// reset count 
+      strcpy(prev_data, buffer);			// copy new data
+    }
+    if (!strcmp(buffer, "RIGHT"))
+        press_right(DELAY);
     if ( !strcmp(buffer, "LEFT"))
       press_left(DELAY);
+    if (!strcmp(buffer, "UP"))
+      press_up(DELAY);
+    if (!strcmp(buffer, "DOWN"))
+      press_down(DELAY);
     if (!strcmp(buffer, "STABLE"))
       press_up(DELAY);
   }
